@@ -1,0 +1,63 @@
+<# in Command Prompt type Powershell and select Powershell ISE #> 
+<# for installing azure ad module run powershell ISE in admin mode#>
+<#Powershell is not case sensitive#>
+
+install-module -name azuread
+
+<# forcefully install #>
+install-module -name azuread -force
+
+<#Connect To Azure Account#>
+Connect-AzAccount
+
+<# Create Resource Group#>
+
+New-AzResourceGroup -Name RGvnet -Location "East US"
+
+Remove-AzResourceGroup -Name "RGvnet"
+
+
+<#Check if module exist if no error then ok#>
+Get-module azuread
+
+<# Connect AzureAD #>
+Connect-AzureAD
+
+<# List AzureAD Users #>
+get-azureaduser
+
+get-azureaduser -filter "startswith(givenname, 'A')"
+
+<# Create AzureAD User #>
+$userpassword= new-object -TypeName Microsoft.Open.AzureAD.Model.PasswordProfile
+$userpassword.Password = "Delta98765!"
+
+New-AzureADUser -DisplayName "Shailendra" -PasswordProfile $userpassword -UserPrincipalName smsaxena19@gmail.com -MailNickName "ShailendraSaxena"
+
+<# AzureAD Groups #>
+
+<#Create New AzureAd Group#>
+New-AzADGroup -displayname AppDevelopersms -MailNickname AppDevelopersms
+
+<#Add  User under created Group#>
+
+Add-AzADGroupMember -MemberUserPrincipalName "smsaxena19@gmail.com" -TargetGroupDisplayName AppDevelopersms
+
+
+Get-AzADGroupMember -GroupDisplayName AppDevelopersms
+
+
+<# ---------------------------------------------------------- #>
+<# Create Virtual Network Vnet with Commands #>
+<#Command to get all command with network#>
+
+Get-command "*Network*"
+Get-command "new*Network*"
+
+New-AzResourceGroup -Name resourcevnet -Location "East US"
+
+$newvnet= New-AzVirtualNetwork -name Alpha -ResourceGroupName resourcevnet -Location 'East US' -AddressPrefix "10.20.0.0/16"
+
+$newsubnet= Add-AzVirtualNetworkSubnetConfig -name Private_subnet -VirtualNetwork $newvnet -AddressPrefix 10.20.10.0/24  
+
+$newsubnet | Set-AzVirtualNetwork
